@@ -6,11 +6,8 @@ import setuptools
 # README file and 2) it's easier to type in the README file than to put a raw
 # string in below ...
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
 setuptools.setup(
-    name = "Sxml",
+    name = "my_save_function",
     version = "0.1",
     author = "Brumo Maximilian Voss",
     author_email = "bruno.m.voss@gmail.com",

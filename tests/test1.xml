@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language>
+<dict>
+<hello>
+  <int>
+  1
+  </int>
+</hello>
+<there>
+  <str>
+  obi wan
+  </str>
+</there>
+<nice>
+  <float>
+  3.141
+  </float>
+</nice>
+<eh>
+  <list>
+    <int>
+    1
+    </int>
+    <int>
+    2
+    </int>
+    <int>
+    3
+    </int>
+  </list>
+</eh>
+<muh>
+  <tuple>
+    <int>
+    1
+    </int>
+    <int>
+    2
+    </int>
+    <int>
+    3
+    </int>
+  </tuple>
+</muh>
+<bug>
+  <none>
+  None
+  </none>
+</bug>
+</dict>
