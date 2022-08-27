@@ -368,6 +368,30 @@ def read(fn,verbose=False):
     
     return data
 
+
+def pack(data):
+    my_lines=[]
+    data_crawl(my_lines,data)
+    return "\n".join(my_lines)
+    
+def unpack(string):
+    lines=string.split("\n")
+    my_data_object=data_unpack(lines)
+    my_data_object=my_data_object[0]
+    return my_data_object
+
+def test4():
+    l=[[(1,2)],[(5,6),(7,8)],[(9,10),(11,12)]]
+    d={"eh":l}
+    
+    my_string=pack(d)
+    my_d=unpack(my_string)
+    
+    assert d==my_d
+    print(d)
+    print(my_d)
+    print(d==my_d)
+    
 def test3():
     print("new test")
     print("")
@@ -420,7 +444,7 @@ def test():
      #d==d2
     
 if __name__=="__main__":
-    test()
+    test4()
     
     #l=["hello",",","there"]
     #l2=["1","2","3"]
