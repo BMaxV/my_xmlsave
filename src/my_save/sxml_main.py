@@ -210,7 +210,6 @@ def data_unpack(lines, end_tag=None, is_dict=False, verbose=False):
     start_stack=[]
     end_stack=[]
     
-    #input()
     #tracks data based on index in tag list
     
     data=[]
@@ -221,16 +220,11 @@ def data_unpack(lines, end_tag=None, is_dict=False, verbose=False):
     tag_stack=[]
     scopes_stack=[]
     
-    if verbose:
-        print("yo, verbose")
-    
     while c < m:
         line=lines[c]
         
         if verbose and c%100==0:
             print(c,"/",m)
-            #print(line)
-            #input("ok?")
         #I'm assuming a tag per line,
         #that's not accurate.
         #if tag in line
@@ -249,6 +243,7 @@ def data_unpack(lines, end_tag=None, is_dict=False, verbose=False):
     if verbose:
         print("line iteration done")
         print("lines now",len(lines))
+    
     current_scope=None
     c=0
     while c < m:
@@ -295,9 +290,10 @@ def data_unpack(lines, end_tag=None, is_dict=False, verbose=False):
         print("this section")
         
     if current_scope!=None:
-        print("that convert2, verbose")
-        print("start",current_scope.start)
-        print("end",current_scope.end)
+        if verbose:
+            print("that convert2, verbose")
+            print("start",current_scope.start)
+            print("end",current_scope.end)
         ob=current_scope.convert(lines,verbose=verbose)
         if verbose:
             print("that convert2 output")
@@ -380,73 +376,8 @@ def unpack(string):
     my_data_object=my_data_object[0]
     return my_data_object
 
-def test4():
-    l=[[(1,2)],[(5,6),(7,8)],[(9,10),(11,12)]]
-    d={"eh":l}
-    
-    my_string=pack(d)
-    my_d=unpack(my_string)
-    
-    assert d==my_d
-    print(d)
-    print(my_d)
-    print(d==my_d)
-    
-def test3():
-    print("new test")
-    print("")
-    print("")
-    l=[[(1,2)],[(5,6),(7,8)],[(9,10),(11,12)]]
-    d={"eh":l}
-    write("test2.xml",d)
-    d2=read("test2.xml")
-    
-    print("in",d)
-    print("out",d2)
-    print(d==d2)
-    assert d==d2
 
-def test2():
-    print("new test")
-    print("")
-    print("")
-    l=[((1,2),(3,4)),((5,6),(7,8)),[(9,10),(11,12)]]
-    d={"eh":l}
-    write("test2.xml",d)
-    d2=read("test2.xml")
-    
-    print("in",d)
-    print("out",d2)
-    print()
-    
-    assert d==d2
-
-def test():
-    d={"hello":1,
-    "there":"obi wan",
-    "nice":3.141,
-    "eh":[1,2,3],
-    "muh":(1,2,3),
-    "bug":None,
-    }
-    print("in",d)
-    write("test1.xml",d)
-    d2=read("test1.xml")
-    
-    print("out",d2)
-    print(d==d2)
-    
-    assert d==d2
-    
-    #s=json.dumps(d,indent=4)
-    #with open("test.txt","w") as f:
-    #    f.write(s)
-     #d==d2
     
 if __name__=="__main__":
     test4()
     
-    #l=["hello",",","there"]
-    #l2=["1","2","3"]
-    
-   # line_insert(l,1,l2)
