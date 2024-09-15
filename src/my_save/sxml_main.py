@@ -3,10 +3,10 @@ int_characters = re.compile("[0-9]*")
 
 class Scope:
     def __init__(self,tag,start):
-        self.tag=tag
-        self.start=start
-        self.end=None
-        self.contents=[]
+        self.tag = tag
+        self.start = start
+        self.end = None
+        self.contents = []
         
     def convert(self,lines,level=0):
         
@@ -43,7 +43,11 @@ class Scope:
                 print("no data converted")
                 raise
         return data
-
+    
+    def __repr__(self):
+        s = f"<scope id:{id(self)} tag:{self.tag} start:{self.start} end:{self.end}>"
+        return s
+        
     def convert_simple_data_line(self, lines):
         data_line = lines[self.start+1]
         data_line = data_line.strip()
@@ -67,6 +71,59 @@ class Scope:
             data = None
         return data_line, data 
 
+
+
+
+def scope_line_recursion(scope,lines,level=0):
+    """
+    this was built as an adaptation of the existing parsing tools.
+    
+    to split
+    
+    <p>my text here <a>something</a> rest my text</p>
+    
+    into 
+    
+    <p> my text here
+    <a> something </a>
+    rest of my text</p>
+    
+    Instead of 
+    
+    <p>my text here <a>something</a> rest my text</p>
+    <a>something</a>
+    
+    as you would get from beautiful soup or something.
+    (note the duplicate <a></a>)
+    
+    It may be necessary to adapt this to pass through whatever
+    inherited something you want.
+    
+    """
+    if len(scope.contents) == 0:
+        for line in lines[scope.start:scope.end+1]:
+            yield (True,line,level)
+    else:
+        c = 0
+        m = len(scope.contents)
+        current_scope = scope.contents[0]
+        last_point = scope.start
+        
+        while c < m:
+            if last_point < current_scope.start:
+                for line in lines[last_point:current_scope.start]:
+                    yield (False,line,level)
+            yield from scope_line_recursion(current_scope,lines,level+1)
+            last_point = current_scope.end+1
+                
+            c += 1
+            next_scope=None
+            if c < len(scope.contents):
+                next_scope = scope.contents[c]
+                current_scope=next_scope
+        
+        for line in lines[current_scope.end+1:scope.end+1]:
+            yield (False,line,level)
 
 def data_crawl(lines, data, level=0):
     """insert
@@ -183,13 +240,11 @@ def tag_in_line(string):
     return elements
 
 
-def data_unpack(lines, end_tag=None, is_dict=False):
-    """
-    explore the data and convert to python dict or list
-    """
 
-    data = []
-    scopes_stack = []
+def tag_split(lines):
+    # first of all, create a copy.
+    lines = list(lines)
+    
     c = 0
     m = len(lines)
     while c < m:
@@ -207,7 +262,23 @@ def data_unpack(lines, end_tag=None, is_dict=False):
             m += len(elements)-1
             continue
         c += 1
+    return lines, m
 
+def data_unpack(lines, end_tag=None, is_dict=False):
+    """
+    explore the data and convert to python dict or list
+    """
+    
+    lines, m = tag_split(lines)
+    current_scope, c = create_nested_scopes(lines, m)
+    
+    if current_scope != None:
+        ob = current_scope.convert(lines)
+        return ob, c
+
+def create_nested_scopes(lines, m):
+    
+    scopes_stack = []
     current_scope = None
     c = 0
     while c < m:
@@ -215,6 +286,7 @@ def data_unpack(lines, end_tag=None, is_dict=False):
         tag = is_tag(line)
         
         if tag[0]:
+        
             handle_start(tag,scopes_stack,current_scope,c)
             handle_end(tag,current_scope,scopes_stack,c)
             
@@ -222,15 +294,16 @@ def data_unpack(lines, end_tag=None, is_dict=False):
                 break
             
             current_scope = get_current_scope(scopes_stack,current_scope)
-        
         c += 1
-
-    if current_scope != None:
-        ob = current_scope.convert(lines)
-        return ob, c
+        
+    if len(scopes_stack)>0:
+        current_scope = scopes_stack[0]
+    
+    return current_scope, c
 
 def get_current_scope(scopes_stack,current_scope):
-
+    """get the last element from the stack or return a new empty one"""
+    
     if len(scopes_stack) > 0:
         current_scope = scopes_stack[-1]
     else:
@@ -251,7 +324,9 @@ def get_current_scope(scopes_stack,current_scope):
 
 def handle_start(tag,scopes_stack,current_scope,c):
     if tag[1] == "start":
-        S = Scope(tag[0], c)
+        possibly_longer=tag[0].split(" ")
+        tag = possibly_longer[0]
+        S = Scope(tag, c)
         scopes_stack.append(S)
         if current_scope != None:
             current_scope.contents.append(S)
