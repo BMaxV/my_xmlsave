@@ -324,9 +324,12 @@ def get_current_scope(scopes_stack,current_scope):
 
 def handle_start(tag,scopes_stack,current_scope,c):
     if tag[1] == "start":
-        possibly_longer=tag[0].split(" ")
-        tag = possibly_longer[0]
-        S = Scope(tag, c)
+        #possibly_longer=tag[0].split(" ")
+        #if len(possibly_longer)>1:
+            #print(possibly_longer)
+        #tag = possibly_longer[0]
+        
+        S = Scope(tag[0], c)
         scopes_stack.append(S)
         if current_scope != None:
             current_scope.contents.append(S)
