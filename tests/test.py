@@ -47,6 +47,7 @@ class TestMySave(unittest.TestCase):
         new_d = sxml_main.read("int_dict_key.xml")
 
         assert d == new_d
+    
     def test_dict_int_keys(self):
         d = {"questtasks":[
                 ("WalkTask", ((0,-2,0),) , ),          # this can coincide with the location I purposefully place some stuff at.
@@ -65,6 +66,11 @@ class TestMySave(unittest.TestCase):
 
         assert d == new_d
     
+    def test_level_dict(self):
+        d={'questtasks': [('WalkTask', ((4, 0, 0),)), ('CollectionTask', ('Axe',)), ('WalkTask', ((4, 6, 0),)), ('HarvestTask', ('Wood',)), ('WalkTask', ((0, 6, 0),)), ('GetTask', ('Tent',)), ('PlaceBlueprintTask', ('Tent',), {'create_output_reference_uid': True, 'reference_variable_name': 'Tent', 'area': 'test1'}), ('PlaceBlueprintTask', ('campfire',), {'create_output_reference_uid': True, 'reference_variable_name': 'campfire', 'area': 'test2'}), ('BuildTask', ('Tent',), {'use_output_reference_uid': True, 'reference_variable_name': 'Tent'}), ('BuildTask', ('campfire',), {'use_output_reference_uid': True, 'reference_variable_name': 'campfire'})], 'world_variables': {'prevent_monsters': True}, 'dropped_items': [('Weapon', {'archetype': 'axe', 'length': 4}, (4, 0, 0)), ('Tent', {'pickup trigger': 'register build'}, (0, 6, 0))], 'interact_objects': [{'typename': 'Obstacle', 'keyword': 'resource', 'pos': (4, 6, 0), 'resourcename': 'Wood'}], 'areas': [{'typename': 'circle', 'local_position': (-4, 6, 0), 'radius': 3, 'color': (0, 0, 255), 'tag': 'blue', 'reference_id': 'test1', 'create on load': 0}, {'typename': 'circle', 'local_position': (-4, 0, 0), 'radius': 3, 'color': (0, 0, 255), 'tag': 'blue', 'reference_id': 'test2', 'create on load': 0}], 'give_items': [('Healing Potion', 1)], 'init player for level': True}
+        sxml_main.write("tut1.xml", d)
+        new_d = sxml_main.read("tut1.xml")
+        assert d == new_d
     
     def test_html_object_split(self):
         
